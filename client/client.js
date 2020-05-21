@@ -92,15 +92,13 @@ Template.roomPlay.onCreated(function() {
 
   if (!user.profile.name) {
     Router.go("login", { roomId: room._id });
-  }
-
-  if (room.players.length >= 2) {
+  } else if (isPlayer(room.players, user._id) || room.players.length < 2) {
+    Session.set("currentRoom", room);
+    Meteor.call("userJoinsRoom", room._id);
+  } else {
     toastr.info(TAPi18n.__('room-full-watch-mode'));
     Router.go("roomWatch", { _id: room._id });
   }
-
-  Session.set("currentRoom", room);
-  Meteor.call("userJoinsRoom", room._id);
 });
 
 Template.roomPlay.onDestroyed(function() {
@@ -113,9 +111,44 @@ Template.roomPlay.onDestroyed(function() {
 });
 
 Template.roomWatch.onCreated(function() {
-  let room = this.data.room;
-  Session.set("currentRoom", room);
+  let room = this.data.room,
+    user = Meteor.user();
+
+  if (!user.profile.name) {
+    Router.go("login", { roomId: room._id });
+  } else {
+    Session.set("currentRoom", room);
+    Meteor.call("observerJoinsRoom", room._id);
+
+    const cursor = Polytunes.Rooms.find(room._id, { fields: { players: 1 } });
+    const handle = cursor.observeChanges({
+      changed: function(id, fields) {
+        if (!fields.players) {
+          return;
+        }
+        if (isPlayer(fields.players, user._id)) {
+          handle.stop();
+          Router.go("roomPlay", { "_id": room._id });
+        }
+      }
+    });
+  }
 });
+
+Template.roomWatch.onDestroyed(function() {
+  let room = this.data.room;
+  Meteor.call("observerLeavesRoom", room._id);
+  if (Session.get("playing")) {
+    window.togglePlay();
+  }
+
+  Session.set("currentRoom", null);
+})
+
+function isPlayer(players, user) {
+  if (!players || !players.length) return false;
+  return players.filter(item => item.userId === user).length;
+}
 
 Template.solo.onCreated(function() {
   let room = this.data.room;
