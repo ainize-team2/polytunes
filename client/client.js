@@ -199,6 +199,12 @@ Template.controls.helpers({
   }
 });
 
+Template.audience.helpers({
+  numObservers: function() {
+    return this.room.observers.length;
+  }
+})
+
 // Focus on login field when template is rendered
 Template.login.rendered = function() {
   if(!this._rendered) {
