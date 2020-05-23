@@ -1,17 +1,93 @@
 .top-bar {
-  background black
-  box-sizing border-box
-  left 0
-  display flex
-  justify-content space-between
-  padding 15px
-  position fixed
-  top 0
-  width 100%
+  background: #3A3A3A;
+  box-sizing: border-box;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 50px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: #FFFFFF;
+  font-family: Montserrat-Medium;
+}
 
-  h1 {
-    font-size 1.2em
-    margin 0
-    padding 0
+.top-bar h1 {
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 600;
+  text-decoration-line: underline;
+  margin: 0;
+  padding: 0;
+  color: #FFFFFF;
+}
+
+.top-bar .menu a {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  text-decoration-line: none;
+  color: #FFFFFF;
+}
+
+.top-bar .menu a:first-of-type {
+  margin-right: 40px;
+}
+
+.footer {
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 40px 50px;
+  margin: 0 auto;
+  max-width: none;
+}
+
+.footer a {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #8E8E94;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+}
+
+.footer a:first-of-type {
+  margin-right: 40px;
+}
+
+.footer a img {
+  margin-right: 7px;
+}
+
+@media screen and (max-width: 945px) {
+  .layout {
+    max-width: none;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .footer {
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .footer a:first-of-type {
+    margin-right: 0;
+    margin-bottom: 19px;
+  }
+
+  .top-bar .menu a:first-of-type {
+    margin-right: 20px;
   }
 }
