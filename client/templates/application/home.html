@@ -1,6 +1,24 @@
 <template name="home">
-  <h1>{{_ "welcome-to-polytunes"}}</h1>
-  <a class="btn" href="{{pathFor 'join'}}">{{_ "play-with-a-stranger"}}</a>
-  <a class="btn" href="{{pathFor 'create'}}">{{_ "play-with-a-friend"}}</a>
-  <a class="btn" href="{{pathFor 'solo'}}">{{_ "play-solo-offline"}}</a>
+  <div class="hero">
+    <h1>Play your notes<br/>& collaborate with others</h1>
+    <h4>Interactive music pad inspired by an electronic music device</h4>
+  </div>
+  <div class="button container">
+    <a class="btn" href="{{pathFor 'join'}}">
+      <img src="/images/ico-face-filled.svg" width="20" height="20"/>
+      <img src="/images/ico-question.svg" width="20" height="20"/>
+      {{_ "play-with-a-stranger"}}
+    </a>
+    <br/>
+    <a class="btn" href="{{pathFor 'create'}}">
+      <img src="/images/ico-face-filled.svg" width="20" height="20"/>
+      <img src="/images/ico-face.svg" width="20" height="20"/>
+      {{_ "play-with-a-friend"}}
+    </a>
+    <br/>
+    <a class="btn" href="{{pathFor 'solo'}}">
+      <img src="/images/ico-face-filled.svg" width="20" height="20"/>
+      {{_ "play-solo-offline"}}
+    </a>
+  </div>
 </template>

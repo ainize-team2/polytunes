@@ -1,10 +1,51 @@
-.login-container
-    left 50%
-    margin auto
-    position absolute
-    top 50%
-    transform translate(-50%, -50%)
-    width: 100%;
+.login {
+    margin-top: 196px;
+    font-family: Montserrat-Medium;
+}
 
-#login-form
-    box-sizing border-box
+.login h2 {
+    font-style: normal;
+    font-weight: normal;
+    color: #808080;
+    margin-bottom: 80px;
+}
+
+#login-form input {
+    width: 300px;
+    border-bottom: 1px solid #FFFFFF;
+    background: none;
+    margin: 70px auto 60px;
+    border-style: none none solid;
+    border-image: none;
+    font-size: 24px;
+    line-height: 36px;
+    text-align: center;
+}
+
+#login-form input:focus,
+#login-form button:focus {
+    outline: none;
+}
+
+#login-form button:disabled {
+    opacity: 0.2;
+} 
+
+#login-form button {
+    opacity: 1.0;
+    background: #1A1B1F;
+    border-radius: 32px;
+    width: 166px;
+    height: 64px;
+    margin: 0 auto;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    line-height: 50px;
+}
+
+#login-form button img {
+    margin-left: 12px;
+}
