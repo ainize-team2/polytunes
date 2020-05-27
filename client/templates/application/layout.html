@@ -1,18 +1,33 @@
 <template name="layout">
+  <div class="layout">
+    <div class="top-bar">
+      <a href="{{pathFor 'home'}}">
+        <h1>Polytunes</h1>
+      </a>
+      <!-- <div class="links">
+        <a href="https://www.facebook.com/playpolytunes" target="_blank"> <i class="fa fa-facebook-square"></i></a>
+        <a href="https://github.com/iwazaru/polytunes" target="_blank"> <i class="fa fa-github-square"></i></a>
+        <a href="http://devpost.com/software/polytunes" target="_blank"> <i class="fa fa-info-circle"></i></a>
+      </div> -->
+      <div class="menu">
+        <a href="{{pathFor 'home'}}">HOME</a>
+        <a href="{{pathFor 'about'}}">ABOUT</a>
+      </div>
+    </div>
 
-  <div class="top-bar">
-    <a href="{{pathFor 'home'}}">
-      <h1>polytunes 0.7</h1>
-    </a>
-    <div class="links">
-      <a href="https://www.facebook.com/playpolytunes" target="_blank"> <i class="fa fa-facebook-square"></i></a>
-      <a href="https://github.com/iwazaru/polytunes" target="_blank"> <i class="fa fa-github-square"></i></a>
-      <a href="http://devpost.com/software/polytunes" target="_blank"> <i class="fa fa-info-circle"></i></a>
+    {{> notifications}}
+
+    {{> yield}}
+
+    <div class="footer">
+      <a>
+        <img src="/images/ico-ainize-logo-tiny.svg"/>
+        Powered by Ainize
+      </a>
+      <a>
+        <img src="/images/ico-github.svg"/>
+        Contribute on Github
+      </a>
     </div>
   </div>
-
-  {{> notifications}}
-
-  {{> yield}}
-
 </template>

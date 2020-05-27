@@ -182,6 +182,13 @@ Template.login.events({
       Router.go('roomPlay', { _id: params.roomId });
     });
     return false;
+  },
+  'keyup #username': function(event) {
+    if(document.getElementById("username").value === "") { 
+      document.getElementById("username-btn").disabled = true; 
+    } else {
+      document.getElementById("username-btn").disabled = false; 
+    }
   }
 });
 

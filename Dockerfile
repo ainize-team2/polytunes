@@ -12,3 +12,6 @@ WORKDIR /opt/src
 EXPOSE 80
 
 CMD ["meteor", "run", "--port", "80"]
+
+# clean up
+RUN rm -rf .meteor/local
