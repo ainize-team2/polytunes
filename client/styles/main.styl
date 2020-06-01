@@ -55,8 +55,6 @@ body {
   margin: 0;
   color: white;
   width: 100%;
-  min-height: 100%;
-  
 }
 
 * {
@@ -66,10 +64,11 @@ body {
 p {
   line-height: 1.2em;
   margin: 10px 0;
+  max-width 700px;
+  margin-bottom: 40px;
 }
 
 .layout {
-  min-height: 100%;
   width: 100%;
 }
 
@@ -78,6 +77,14 @@ p {
   margin: 0 auto 109px;
   display: block;
   padding: 0 50px;
+}
+
+.centered {
+  left: 50%;
+  position absolute
+  top 50%
+  transform translate(-50%, -50%)
+  width: 100%;
 }
 
 .bottom {
@@ -181,6 +188,7 @@ h1 {
 h2 {
   font-size: 36px;
   line-height: 50px;
+  margin-bottom: 37px;
 }
 
 h4 {
@@ -263,6 +271,71 @@ label {
   line-height: 28px;
   color: #FFFFFF;
   opacity: 0.6;
+}
+
+.waiting_icon {
+  height: 40px;
+  margin-bottom: 20px;
+  img {
+    height: 40px;
+    width: 40px;
+  }
+  :first-child {
+    margin-right: 10px;
+  }
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+    100% {
+      opacity: 0.99;
+    }
+  }
+  :last-child  {
+    animation: blink 2s linear 2s infinite;
+    -webkit-animation: blink 2s linear 2s infinite;
+  }
+}
+.room.play {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.share {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  button {
+    border: none;
+    background: none;
+    &:focus {
+      outline:0;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+#shareUrl {
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 36px;
+  border: none;
+  border-bottom: 1px solid white;
+  background-color: transparent;
+  padding-bottom: 10px;
+  margin-bottom: 40px;
+  width: 554px;
+  color: #9997ce;
+  max-width: none;
 }
 
 @media screen and (max-width: 945px) {

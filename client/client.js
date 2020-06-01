@@ -67,22 +67,32 @@ Template.roomPlay.helpers({
 
 Template.waitingForPlayers.helpers({
   isPublic: function() {
+    console.log(this.room.isPublic)
     return this.room.isPublic;
-  },
+  }
+});
+
+Template.waitingPrivate.helpers({
+  currentUrl: function() {
+    return window.location.href;
+  }
+});
+
+Template.share.helpers({
   currentUrl: function() {
     return window.location.href;
   }
 });
 
 // Init clipboard with event delegation (only on parent)
-Template.waitingForPlayers.onRendered(function () {
+Template.share.onRendered(function () {
   this.clipboard = new Clipboard('.clipboard');
   this.clipboard.on('success', (e) => {
     toastr.success(TAPi18n.__('copied'));
   });
 });
 
-Template.waitingForPlayers.onDestroyed(function () {
+Template.share.onDestroyed(function () {
   this.clipboard.destroy();
 });
 
