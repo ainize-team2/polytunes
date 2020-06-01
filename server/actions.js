@@ -64,24 +64,24 @@ Meteor.methods({
     // Update user current room
     Meteor.users.update(user, { $set: { 'currentRoom': roomId } });
 
-    // Remove player before inserting
-    Polytunes.Rooms.update(room._id, { $pull: { players: { userId: user._id }, multi: true } });
+    if (!isPlayer(room.players, user._id)) {
+      // Remove player before inserting
+      Polytunes.Rooms.update(room._id, { $pull: { players: { userId: user._id }, multi: true } });
 
-    // Insert player
-    let slot = room.players.length + 1;
-    Polytunes.Rooms.update(room._id, {
-      $push: {
-        players: {
-          userId: user._id,
-          name: user.profile.name,
-          slot: room.players.length + 1
+      // Insert player
+      Polytunes.Rooms.update(room._id, {
+        $push: {
+          players: {
+            userId: user._id,
+            name: user.profile.name,
+            slot: room.players.length + 1
+          }
         }
-      }
-    });
+      });
+      Polytunes.createNotification(room._id, `user-joined-the-room`, { user_name: user.profile.name }, { withSound: true });
 
-    Polytunes.createNotification(room._id, `user-joined-the-room`, { user_name: user.profile.name }, { withSound: true });
-
-    console.log(`User ${user.profile.name} joined room ${roomId}.`);
+      console.log(`User ${user.profile.name} joined room ${roomId}.`);
+    }
   },
 
   userLeavesRoom: function(roomId, user) {
@@ -115,8 +115,76 @@ Meteor.methods({
       }
     });
 
+    room = Polytunes.Rooms.findOne(roomId);
+
+    if (!room || !room.observers || !room.players) {
+      return;
+    }
+
+    if (room.observers.length > 0 && room.players.length < 2) {
+      const currentPlayer = room.players.length ? room.players[0] : null;
+      const nextPlayer = room.observers[0];
+      Polytunes.Rooms.update(roomId, {
+        $push: {
+          players: {
+            userId: nextPlayer.userId,
+            name: nextPlayer.name,
+            slot: currentPlayer && currentPlayer.slot === 0 ? 1 : 0
+          }
+        },
+        $pull: {
+          observers: { userId: nextPlayer.userId },
+          multi: true
+        }
+      });
+      console.log(`User ${nextPlayer.name} became the next player`);
+    }
+
     Polytunes.createNotification(room._id, "user-left-the-room", { user_name: user.profile.name }, { withSound: false });
 
     console.log(`User ${user.profile.name} left room ${roomId}.`);
+  },
+
+  observerJoinsRoom: function(roomId) {
+    let user = Meteor.user(),
+      room = Polytunes.Rooms.findOne(roomId);
+
+    // Don't join if user is not logged
+    if (!user.profile.name) {
+      return false;
+    }
+    
+    // Remove observer before inserting
+    Polytunes.Rooms.update(room._id, { $pull: { observers: { userId: user._id }, multi: true } });
+
+    // Insert observer
+    Polytunes.Rooms.update(room._id, {
+      $push: {
+        observers: {
+          userId: user._id,
+          name: user.profile.name
+        }
+      }
+    });
+
+    // Polytunes.createNotification(room._id, `user-joined-the-room`, { user_name: user.profile.name }, { withSound: true });
+
+    console.log(`User ${user.profile.name} joined room ${roomId} as audience.`);
+  },
+
+  observerLeavesRoom: function(roomId) {
+    let user = Meteor.user();
+
+    Polytunes.Rooms.update(roomId, {
+      $pull: {
+        observers: { userId: user._id },
+        multi: true
+      }
+    });
   }
 });
+
+function isPlayer(players, user) {
+  if (!players || !players.length) return false;
+  return players.filter(item => item.userId === user).length;
+}

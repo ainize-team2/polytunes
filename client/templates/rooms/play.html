@@ -9,6 +9,7 @@
         {{> board}}
         {{> players}}
         {{> controls}}
+        {{> audience}}
       {{/if}}
     {{/if}}
   </div>
@@ -66,5 +67,11 @@
 <template name="controls">
   <div class="controls">
     <button id="play"><i class="fa fa-{{playButtonIcon}}"></i></button>
+  </div>
+</template>
+
+<template name="audience">
+  <div>
+    {{numObservers}}
   </div>
 </template>
