@@ -1,45 +1,62 @@
 <template name="roomPlay">
-  <div class="room play">
-    {{#if notLogged}}
-      {{> login}}
-    {{else}}
-      {{#if notEnoughPlayers}}
-        {{> waitingForPlayers}}
+  <div class="main centered">
+    <div class="room play">
+      {{#if notLogged}}
+        {{> login}}
       {{else}}
-        {{> board}}
-        {{> players}}
-        {{> controls}}
-        {{> audience}}
+        {{#if notEnoughPlayers}}
+          {{> waitingForPlayers}}
+        {{else}}
+          {{> board}}
+          {{> players}}
+          {{> controls}}
+        {{/if}}
       {{/if}}
-    {{/if}}
+    </div>
   </div>
 </template>
 
 <template name="waitingForPlayers">
-  <p><i class="fa fa-circle-o-notch fa-spin fa-2x"></i></p>
-  <h1>{{_ "waiting-for-another-player"}}</h1>
-  <p>{{_ "waiting-two-player-game"}}</p>
-
   {{#if isPublic}}
-    <p>{{_ "waiting-in-public-room"}}</p>
+    {{> waitingPublic}}
   {{else}}
-    <p>{{_ "waiting-in-private-room"}}</p>
+    {{> waitingPrivate}}
   {{/if}}
+</template>
 
-  <p>{{_ "waiting-invite-with-url"}}</p>
+<template name="waitingPrivate">
+  <div class="waiting_icon">
+    <img src="/images/ico-face-filled.svg" />
+    <img src="/images/ico-face.svg" />
+  </div>
+  <h2 className="title">invite your friend</h2>
+  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline" readonly>
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a private room, you can always bring someone. Send this page's URL to invite a friend, your neigbhour, your secret crush or your grandma — anyone can play Polytunes!</p>
+    {{> share}}
+</template>
 
-  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline"> &nbsp;
-  <i class="fa fa-lg fa-clipboard pointer clipboard" data-clipboard-target="#shareUrl"></i>
-  <a href="https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}" target="_blank">
-    <i class="fa fa-facebook-square fa-lg"></i>
-  </a>
-  <a href="https://twitter.com/home?status={{currentUrl}}" target="_blank">
-    <i class="fa fa-twitter-square fa-lg"></i>
-  </a>
-  <a href="https://plus.google.com/share?url={{currentUrl}}" target="_blank">
-    <i class="fa fa-google-plus-square fa-lg"></i>
-  </a>
+<template name="waitingPublic">
+  <div class="waiting_icon">
+    <img src="/images/ico-face-filled.svg" />
+    <img src="/images/ico-question.svg" />
+  </div>
+  <h2>waiting for another player</h2>
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a public room, maybe someone will eventually join in. But if not, you can always bring someone. Send this page's URL to invite a friend, your neigbhour, your secret crush or your grandma — anyone can play Polytunes!</p>
+  {{> share}}
+</template>
 
+<template name="share">
+  <div class="share">
+    <button type="button" class="clipboard" data-clipboard-text="{{currentUrl}}">
+      <img src="/images/ico-link.svg" />
+    </button>
+    <button type="button" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}')">
+      <img src="/images/ico-fb.svg" />
+    </button>
+    <button type="button" onclick="window.open('https://twitter.com/home?status={{currentUrl}}')">
+      <img src="/images/ico-twitter.svg" />
+    </button>
+  </div>
 </template>
 
 <template name="board">
