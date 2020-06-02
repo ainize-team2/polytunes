@@ -1,18 +1,20 @@
+.board-container {
+  display: flex;
+  flex-direction: column;
+  width: 485px;
+}
+
 table {
-  margin: auto;
+  height: 485px;
   border-collapse: separate;
-  border-spacing: 7px;
+  border-spacing: 5px;
   cursor: default;
 
   td {
     border-radius: 1px
     border-spacing: 0;
-    background: white;
-    height: 21px;
-    opacity: .15;
+    opacity: .1;
     padding: 0;
-    width: 21px;
-    // transition-delay: .5s;
 
     &.around {
       opacity: 0.3;
@@ -51,9 +53,28 @@ table {
   }
 }
 
-/* Smaller than tablets */
-@media (max-width: 767px) {
+.player-names {
+  width: 100%;
+}
+
+@media (max-width: 460px) {
+  .board-container {
+    // width: 95vh;
+    // height: calc(95vh + 110px);
+    width: 100%;
+    height: 100%;
+    min-width: 370px;
+    min-height: 370px;
+  }
+
   table {
-    border-spacing: 5px;
+    border-spacing: 8px;
+    // width: 95vh;
+    // height: 95vh !important;
+
+    width: 100%;
+    height: 100%;
+    min-width: 370px;
+    min-height: 370px;
   }
 }

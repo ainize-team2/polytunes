@@ -1,5 +1,5 @@
 <template name="home">
-  <div class="main">
+  <div class="main home">
     <div class="hero">
       <h1>Play your notes<br />& collaborate with others</h1>
       <h4>Interactive music pad inspired by an electronic music device</h4>
@@ -21,6 +21,10 @@
         <img src="/images/ico-face-filled.svg" width="20" height="20" />
         {{_ "play-solo-offline"}}
       </a>
+    </div>
+    <div class="live container">
+      <img src="/images/ico-music-note.svg" />
+      {{numLivePlays}} collaborations played
     </div>
   </div>
 </template>

@@ -1,5 +1,8 @@
 "use strict";
 
+const colors = [ "#AD87FF", "#D7E131", "#D15BB0", "#03A5C4", "#FBB43D", "#41DD92" ];
+const NUM_COLORS = 6;
+
 function debug(msg) {
   if (Session.get('debug') === true) {
     console.log(msg);
@@ -17,14 +20,19 @@ Meteor.startup( function() {
 
   // Notification options
   toastr.options = {
-    positionClass: "toast-bottom-left",
-    preventDuplicates: true
+    positionClass: "toast-container",
+    preventDuplicates: true,
+    // showDuration: "1000000000",
+    // timeOut: "1000000000"
   }
 });
 
 Template.home.helpers({
   rooms: function() {
     return Polytunes.Rooms.find({ isPublic: true });
+  },
+  numLivePlays: function() {
+    return Polytunes.Rooms.find().count();
   }
 });
 
@@ -67,7 +75,6 @@ Template.roomPlay.helpers({
 
 Template.waitingForPlayers.helpers({
   isPublic: function() {
-    console.log(this.room.isPublic)
     return this.room.isPublic;
   }
 });
@@ -93,7 +100,7 @@ Template.share.onRendered(function () {
 });
 
 Template.share.onDestroyed(function () {
-  this.clipboard.destroy();
+  if (this.clipboard) this.clipboard.destroy();
 });
 
 Template.roomPlay.onCreated(function() {
@@ -163,12 +170,15 @@ function isPlayer(players, user) {
 Template.solo.onCreated(function() {
   let room = this.data.room;
   Session.set("currentRoom", room);
+  Session.set("currentColor", colors[Math.floor(Math.random() * NUM_COLORS)]); 
 });
 
 Template.solo.onDestroyed(function() {
   if (Session.get("playing")) {
     window.togglePlay();
   }
+  Session.set("currentRoom", null);
+  Session.set("currentColor",null); 
 });
 
 let boardData;
@@ -198,7 +208,12 @@ Template.board.helpers({
   }
 });
 
-Template.players.helpers({
+Template.playerNames.helpers({
+  players: function() {
+    return this.room.players;
+  }
+});
+Template.playerColors.helpers({
   players: function() {
     return this.room.players;
   }
@@ -206,14 +221,14 @@ Template.players.helpers({
 Template.controls.helpers({
   playButtonIcon: function() {
     return (Session.get('playing') === true ? 'pause' : 'play');
+  },
+  numObservers: function() {
+    return this.room.observers ? this.room.observers.length : 0;
+  },
+  isSolo: function() {
+    return this.room.isSolo;
   }
 });
-
-Template.audience.helpers({
-  numObservers: function() {
-    return this.room.observers.length;
-  }
-})
 
 // Focus on login field when template is rendered
 Template.login.rendered = function() {
@@ -255,10 +270,19 @@ Template.board.events({
   // Play note on mouse down if playback is off
   'mousedown td': function(event, template) {
     let target = $(event.target);
+    const room = Session.get("currentRoom");
 
-    // Play note if board is not currently playing
-    if (Session.get("playing") == false && !target.hasClass('active')) {
-      instrument.startPlayingNote(target.data('frequency'));
+    if (target.hasClass('active')) {
+      if (room && room.isSolo) target.css("background", "#FFFFFF");
+    } else {
+      // Play note if board is not currently playing
+      if (Session.get("playing") == false ) {
+        instrument.startPlayingNote(target.data('frequency'));
+      }
+      if (room && room.isSolo) {
+        const color = Session.get("currentColor"); 
+        target.css("background", color);
+      }
     }
   },
 
@@ -284,22 +308,42 @@ Template.roomPlay.events({
 
   // Add note to the board when mouse button is released
   'mouseup td': function (event, template) {
+    console.log("mouse upppppp", Session.get("currentRoom"))
     let target = $(event.target),
       cell = {
         id: target.data('id'),
         slot: $('.user_'+Meteor.userId()).data('slot'),
       };
 
+    if (cell.slot === undefined) {
+      console.log("invalid cell:", cell);
+      return;
+    }
+
     if (target.hasClass('active')) {
       cell.active = false;
+      cell.color = "#FFFFFF";
     } else {
+      const room = Polytunes.Rooms.findOne(Session.get("currentRoom")._id); 
+      const player = _.find(room.players, player => player.slot === cell.slot);
+      console.log("meteor room:", room);
+      console.log("player:", player);
+      console.log("cell:", cell);
       cell.active = true;
+      cell.color = player ? player.color : "#FFFFFF";
     }
 
     debug("Updating cell "+cell.id);
     Meteor.call('updateCell', cell, function(error, result) {
       if (error) {
-        toastr.error(TAPi18n.__(error.reason));
+        const popup = $(".popup");
+        if (popup) {
+          $(".popup > div").html(TAPi18n.__(error.reason));
+          popup.css("display", "flex");
+          setTimeout(() => {
+            popup.css("display", "none");
+          }, 3000);
+        }
       }
     });
   }
@@ -327,6 +371,7 @@ Template.solo.events({
 
 Template.roomWatch.events({
   'click #board': function() {
+    console.log("board clickeeddddd")
     toastr.warning(TAPi18n.__("cannot-add-notes-watch-mode"));
   }
 });
@@ -423,7 +468,7 @@ var cursor = 0;
 
 var getCellSize = function(boardSize) {
   let windowWidth = $(window).width(),
-    boardWidth = windowWidth,
+    boardWidth = windowWidth - 10,
     cellWidth = 0,
     borderSpacing = 5;
 
