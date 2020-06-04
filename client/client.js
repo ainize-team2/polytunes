@@ -10,6 +10,10 @@ function debug(msg) {
 }
 
 Meteor.startup( function() {
+  if (Meteor.isClient) {
+    // Router.plugin("reywood:iron-router-ga");
+  }
+
   Session.set("playing", false);
   window.instrument = new Instrument();
   Meteor.call('userPings');
@@ -21,9 +25,7 @@ Meteor.startup( function() {
   // Notification options
   toastr.options = {
     positionClass: "toast-container",
-    preventDuplicates: true,
-    // showDuration: "1000000000",
-    // timeOut: "1000000000"
+    preventDuplicates: true
   }
 });
 
@@ -35,6 +37,19 @@ Template.home.helpers({
     return Polytunes.Rooms.find().count();
   }
 });
+
+Template.layout.events({
+  'click #ainize-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "poweredby_click");
+    }
+  },
+  'click #github-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "github_click");
+    }
+  },
+})
 
 Template.create.onCreated(function() {
   Meteor.call('createRoom', { isPublic: false }, function(error, roomId) {
@@ -101,6 +116,14 @@ Template.share.onRendered(function () {
 
 Template.share.onDestroyed(function () {
   if (this.clipboard) this.clipboard.destroy();
+});
+
+Template.share.events({
+  'click button': function (event, template) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "share_button_click");
+    }
+  }
 });
 
 Template.roomPlay.onCreated(function() {
@@ -178,7 +201,7 @@ Template.solo.onDestroyed(function() {
     window.togglePlay();
   }
   Session.set("currentRoom", null);
-  Session.set("currentColor",null); 
+  Session.set("currentColor", null); 
 });
 
 let boardData;
@@ -211,6 +234,9 @@ Template.board.helpers({
 Template.playerNames.helpers({
   players: function() {
     return this.room.players;
+  },
+  isMe: function(userId) {
+    return Meteor.user()._id === userId ? "(you)" : "";
   }
 });
 Template.playerColors.helpers({
@@ -273,7 +299,9 @@ Template.board.events({
     const room = Session.get("currentRoom");
 
     if (target.hasClass('active')) {
-      if (room && room.isSolo) target.css("background", "#FFFFFF");
+      if (room && room.isSolo) {
+        target.css("background", "#FFFFFF");
+      }
     } else {
       // Play note if board is not currently playing
       if (Session.get("playing") == false ) {
@@ -308,7 +336,7 @@ Template.roomPlay.events({
 
   // Add note to the board when mouse button is released
   'mouseup td': function (event, template) {
-    console.log("mouse upppppp", Session.get("currentRoom"))
+    // console.log("mouse upppppp", Session.get("currentRoom"))
     let target = $(event.target),
       cell = {
         id: target.data('id'),
@@ -378,6 +406,9 @@ Template.roomWatch.events({
 
 Template.controls.events({
   'click #play': function (event, template) {
+    if (!Session.get("playing") && Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "play_button_click");
+    }
     window.togglePlay(this.room);
     window.instrument.playNote(1); // Hack to fix sound in Safari iOS
   }

@@ -85,13 +85,13 @@
   <div class="player-names">
     {{#each players}}
       <div class="player player_{{@index}} user_{{userId}}" data-slot={{@index}}>
-        <div>
+        <div style="color:{{color}};">
           {{#if @index}}
-            {{ name }}
+            {{ name }} {{ isMe userId }}
             <img src="/images/ico-face.svg" />
           {{else}}
             <img src="/images/ico-face-filled.svg" />
-            {{ name }}
+            {{ name }} {{ isMe userId }}
           {{/if}}
         </div>
         <div class="player-color" style="background-color:{{color}};"></div>
