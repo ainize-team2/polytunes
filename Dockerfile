@@ -1,4 +1,4 @@
-FROM danieldent/meteor:1.1.0.2
+FROM liayoo/meteor
 
 RUN apt-get clean && apt-get update \
     && apt-get install -y locales \
@@ -12,6 +12,3 @@ WORKDIR /opt/src
 EXPOSE 80
 
 CMD ["meteor", "run", "--port", "80", "--settings", "settings.json"]
-
-# clean up
-RUN rm -rf .meteor/local
