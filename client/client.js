@@ -24,7 +24,7 @@ Meteor.startup( function() {
 
   // Notification options
   toastr.options = {
-    positionClass: "toast-container",
+    positionClass: "toast-bottom-left",
     preventDuplicates: true
   }
 });
@@ -292,7 +292,6 @@ Template.body.events({
 });
 
 Template.board.events({
-
   // Play note on mouse down if playback is off
   'mousedown td': function(event, template) {
     let target = $(event.target);
@@ -329,7 +328,6 @@ Template.board.events({
     window.instrument.stopPlayingNote();
   },
 });
-
 
 // Room in play mode
 Template.roomPlay.events({
@@ -399,7 +397,6 @@ Template.solo.events({
 
 Template.roomWatch.events({
   'click #board': function() {
-    console.log("board clickeeddddd")
     toastr.warning(TAPi18n.__("cannot-add-notes-watch-mode"));
   }
 });

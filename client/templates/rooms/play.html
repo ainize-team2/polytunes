@@ -1,19 +1,17 @@
 <template name="roomPlay">
-  <div class="main centered">
-    <div class="room play">
-      {{#if notLogged}}
-        {{> login}}
+  <div class="room play">
+    {{#if notLogged}}
+      {{> login}}
+    {{else}}
+      {{#if notEnoughPlayers}}
+        {{> waitingForPlayers}}
       {{else}}
-        {{#if notEnoughPlayers}}
-          {{> waitingForPlayers}}
-        {{else}}
-          <div class="container">
-            {{> board}}
-            {{> controls}}
-          </div>
-        {{/if}}
+        <div class="container">
+          {{> board}}
+          {{> controls}}
+        </div>
       {{/if}}
-    </div>
+    {{/if}}
   </div>
 </template>
 
@@ -33,8 +31,8 @@
     <img src="/images/ico-face.svg" />
   </div>
   <h2 class="title">invite your friend</h2>
-  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline" readonly>
-  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a private room, you can always bring someone. Send this page's URL to invite a friend, your neigbhour, your secret crush or your grandma — anyone can play Polytunes!</p>
+  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline clipboard" readonly data-clipboard-text="{{currentUrl}}">
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a private room, you can always bring someone. Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!</p>
     {{> share}}
 </template>
 
@@ -44,7 +42,7 @@
     <img src="/images/ico-question.svg" />
   </div>
   <h2>waiting for another player</h2>
-  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a public room, maybe someone will eventually join in. But if not, you can always bring someone. Send this page's URL to invite a friend, your neigbhour, your secret crush or your grandma — anyone can play Polytunes!</p>
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a public room, maybe someone will eventually join in. But if not, you can always bring someone. Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!</p>
   {{> share}}
 </template>
 
@@ -70,12 +68,31 @@
         {{#each rows}}
           <tr>
             {{#each .}}
-          <td class="{{#if active}}active player_{{slot}}{{/if}}" data-id="{{id}}" data-frequency="{{frequency}}" style="width:{{size}}px;height:{{size}}px;background:{{color}} !important;"></td>
+          <td class="{{#if active}}active player_{{slot}}{{/if}}"
+              data-id="{{id}}"
+              data-frequency="{{frequency}}"
+              style="background:{{color}} !important;">
+            <div></div>
+          </td>
             {{/each}}
           </tr>
         {{/each}}
       </tbody>
     </table>
+    <!-- <div id="board">
+      {{#each rows}}
+        <div>
+          {{#each .}}
+            <div class="{{#if active}}active player_{{slot}}{{/if}} square"
+                data-id="{{id}}"
+                data-frequency="{{frequency}}"
+                style="width:{{size}}px;height:{{size}}px;background:{{color}} !important;">
+              <div></div>
+            </div>
+          {{/each}}
+        </div>
+      {{/each}}
+    </div> -->
     {{> playerColors}}
     <div class="popup"><div></div></div>
   </div>
@@ -87,11 +104,13 @@
       <div class="player player_{{@index}} user_{{userId}}" data-slot={{@index}}>
         <div style="color:{{color}};">
           {{#if @index}}
-            {{ name }} {{ isMe userId }}
+            <span>{{ name }}</span>
+            <span>{{ isMe userId }}</span>
             <img src="/images/ico-face.svg" />
           {{else}}
             <img src="/images/ico-face-filled.svg" />
-            {{ name }} {{ isMe userId }}
+            <span>{{ name }}</span>
+            <span>{{ isMe userId }}</span>
           {{/if}}
         </div>
         <div class="player-color" style="background-color:{{color}};"></div>
@@ -126,7 +145,7 @@
       invite more audience
     </h3>
     <p>
-      You can always bring someone.<br/>Send this page's URL to invite a friend, your neigbhour, your secret crush or your grandma — anyone can play Polytunes!
+      You can always bring someone.<br/>Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!
     </p>
     {{> share}}
   </div>

@@ -5,14 +5,14 @@
   h1 {
     margin-top: 20px;
     margin-bottom: 15px;
-    font-size: 64px;
-    line-height: 80px;
+    // font-size: 64px;
+    // line-height: 80px;
     font-weight: 400;
   }
 
   h2 {
-    font-size: 36px;
-    line-height: 50px;
+    // font-size: 36px;
+    // line-height: 50px;
     font-weight: 400;
     margin: 0 0 10px 0;
     padding: 0;
@@ -22,14 +22,14 @@
   h3 {
     margin-top: 10px;
     margin-bottom: 10px;
-    font-size: 20px;
-    line-height: 34px;
+    // font-size: 20px;
+    // line-height: 34px;
     font-weight: 500;
   }
 
   h4 {
-    font-size: 16px;
-    line-height: 28px;
+    // font-size: 16px;
+    // line-height: 28px;
     font-weight: 400;
     opacity: 0.6;
     margin: 0;
@@ -117,9 +117,6 @@
   }
 } 
 
-
-
-
 .ainize {
   .container {
     background: #44444D;
@@ -148,76 +145,89 @@
     }
     &:active {
       background-color: #6535cc !important;
+      outline: none;
+    }
+    &:focus {
+      outline: none;
     }
   }
 }
 
 @media screen and (max-width: 1088px) {
-  .about_hero .container {
+  .about-page .about_hero .container {
     padding: 80px 50px 0px 50px;
   }
 }
 
 @media screen and (max-width: 948px) {
-  .about_hero .quote {
-    padding: 80px 100px 0px 100px;
-  }
-  .about_hero .quote h3 {
-    font-size: 22px;
-    line-height: 30px;
+  .about-page {
+    .about_hero .quote {
+      padding: 80px 100px 0px 100px;
+    }
+    .about_hero .quote h3 {
+      // font-size: 22px;
+      // line-height: 30px;
+    }
   }
 }
 
 @media screen and (max-width: 663px) {
-  .about_hero .container {
-    padding: 50px 20px 0px 20px;
-  }
-  .about .container {
-    padding: 60px 20px 60px 20px;
-  }
-  .about .container:last-child {
-    padding: 0px 20px 60px 20px;
-  }
-  .about_hero .quote {
-    padding: 40px 80px 0px 80px;
-  }
-  .about_hero .quote h3 {
-    font-size: 16px;
-    line-height: 25px;
-  }
-  .about_hero .quote img {
-    height: 40px;
-    width: 40px;
-  }
-  .ainize button {
-    width: 130px;
-    height: 35px;
-    font-size: 9px;
-  }
-  .ainize .container {
-    padding: 60px;
+  .about-page {
+    .about_hero .container {
+      padding: 50px 20px 0px 20px;
+    }
+    .about .container {
+      padding: 60px 20px 60px 20px;
+    }
+    .about .container:last-child {
+      padding: 0px 20px 60px 20px;
+    }
+    .about_hero .quote {
+      padding: 40px 80px 0px 80px;
+    }
+    .about_hero .quote h3 {
+      // font-size: 16px;
+      // line-height: 25px;
+    }
+    .about_hero .quote img {
+      height: 40px;
+      width: 40px;
+    }
+    .ainize button {
+      width: 130px;
+      height: 35px;
+      font-size: 9px;
+      &:focus {
+        outline: none;
+      }
+    }
+    .ainize .container {
+      padding: 60px;
+    }
   }
 }
 
 @media screen and (max-width: 487px) {
-  .about_hero h1 {
-    font-size: 25px;
-    line-height: 35px;
+  .about-page .about_hero h1 {
+    // font-size: 25px;
+    // line-height: 35px;
   }
 }
 
 @media screen and (max-width: 460px) {
-  .about_hero .container {
-    padding: 40px 20px 0px 20px;
-  }
-  .about_hero .quote h3 {
-    font-size: 12px;
-    line-height: 20px;
-  }
-  .about_hero .quote {
-    padding: 40px 55px 0px 55px;
-  }
-  .ainize .container {
-    padding: 40px;
+  .about-page {
+    .about_hero .container {
+      padding: 40px 20px 0px 20px;
+    }
+    .about_hero .quote h3 {
+      // font-size: 12px;
+      // line-height: 20px;
+    }
+    .about_hero .quote {
+      padding: 40px 55px 0px 55px;
+    }
+    .ainize .container {
+      padding: 40px;
+    }
   }
 }
