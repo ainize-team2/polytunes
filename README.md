@@ -1,5 +1,7 @@
 # Polytunes
 
+[![Run on Ainize](https://www.ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/ainize-team2/polytunes)
+
 Polytunes is a collaborative music game playable in the browser and on touch devices. The goal is to create melodies by collaborating without speaking to (or event knowing!) other players. If you don't feel like composing you can just watch and listen to others creating music in real-time.
 
 Follow Polytunes on [Facebook](https://www.facebook.com/playpolytunes) and [Devpost](http://devpost.com/software/polytunes).
