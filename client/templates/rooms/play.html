@@ -48,14 +48,11 @@
 
 <template name="share">
   <div class="share">
-    <button type="button" class="clipboard" data-clipboard-text="{{currentUrl}}">
-      <img src="/images/ico-copy.svg" />
+    <button id="copy" type="button" class="clipboard" data-clipboard-text="{{currentUrl}}">
     </button>
-    <button type="button" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}')">
-      <img src="/images/ico-fb.svg" />
+    <button id="fb" type="button" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}')">
     </button>
-    <button type="button" onclick="window.open('https://twitter.com/home?status={{currentUrl}}')">
-      <img src="/images/ico-twitter.svg" />
+    <button id="twitter" type="button" onclick="window.open('https://twitter.com/home?status={{currentUrl}}')">
     </button>
   </div>
 </template>
@@ -79,20 +76,6 @@
         {{/each}}
       </tbody>
     </table>
-    <!-- <div id="board">
-      {{#each rows}}
-        <div>
-          {{#each .}}
-            <div class="{{#if active}}active player_{{slot}}{{/if}} square"
-                data-id="{{id}}"
-                data-frequency="{{frequency}}"
-                style="width:{{size}}px;height:{{size}}px;background:{{color}} !important;">
-              <div></div>
-            </div>
-          {{/each}}
-        </div>
-      {{/each}}
-    </div> -->
     {{> playerColors}}
     <div class="popup"><div></div></div>
   </div>

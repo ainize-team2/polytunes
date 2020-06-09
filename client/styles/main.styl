@@ -113,23 +113,6 @@ body {
     margin-bottom: 40px;
   }
 
-  .share {
-    left: -12px;
-    position: relative;
-    width: fit-content !important;
-
-    button {
-      // width: 32px;
-      // height: 32px;
-      // margin-right: 32px;
-      padding: 0;
-    }
-
-    button:last-child {
-      margin-right: 0;
-    }
-  }
-
   .eq-bar {
     fill: #AD87FF;
     transform: scale(1, -1) translate(0, -24px);
@@ -316,16 +299,8 @@ body {
   }
 }
 
-#add-room {
-  border-radius: 2px;
-  background-color: #607D8B;
-  border: 0px;
-  padding: 12px;
-  color: white;
-}
-
-#play:hover, #add-room:hover {
-  opacity: 0.8;
+#play:hover {
+  background-color: #854cff !important;
 }
 
 .center {
@@ -534,20 +509,62 @@ label {
 }
 
 .share {
+  left: -12px;
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-bottom: 30px;
+
   button {
+    // width: 32px;
+    // height: 32px;
+    width: 48px;
+    height: 48px;
+    margin-right: 16px;
+    padding: 0;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
     border: none;
     background: none;
+
     &:focus {
       outline: none;
     }
     &:hover {
       cursor: pointer;
     }
+  }
+
+  button:last-child {
+    margin-right: 0;
+  }
+
+  button#copy {
+    background-image: url("../images/ico-copy.svg");
+  }
+
+  button#fb {
+    background-image: url("../images/ico-fb.svg");
+  }
+
+  button#twitter {
+    background-image: url("../images/ico-twitter.svg");
+  }
+
+  button#copy:hover {
+    background-image: url("../images/ico-copy-hover.svg");
+  }
+
+  button#fb:hover {
+    background-image: url("../images/ico-fb-hover.svg");
+  }
+
+  button#twitter:hover {
+    background-image: url("../images/ico-twitter-hover.svg");
   }
 }
 
