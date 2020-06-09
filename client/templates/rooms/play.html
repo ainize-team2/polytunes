@@ -125,7 +125,11 @@
     </div>
     {{/unless}}
     <h3>
-      invite more audience
+      {{#if isSolo}}
+        invite your friends to Polytunes
+      {{else}}
+        invite more audience
+      {{/if}}
     </h3>
     <p>
       You can always bring someone.<br/>Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!
