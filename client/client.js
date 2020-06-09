@@ -138,7 +138,13 @@ Template.roomPlay.onCreated(function() {
   } else {
     toastr.info(TAPi18n.__('room-full-watch-mode'));
     Router.go("roomWatch", { _id: room._id });
+    return;
   }
+  const cb = (event) => {
+    window.removeEventListener('popstate', cb);
+    Router.go("home");
+  }
+  window.addEventListener('popstate', cb, false);
 });
 
 Template.roomPlay.onDestroyed(function() {
