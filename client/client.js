@@ -51,6 +51,19 @@ Template.layout.events({
   },
 })
 
+Template.about.events({
+  'click #ainize-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "poweredby_click");
+    }
+  },
+  'click #github-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "github_click");
+    }
+  },
+})
+
 Template.create.onCreated(function() {
   Meteor.call('createRoom', { isPublic: false }, function(error, roomId) {
     Router.go('roomPlay', { '_id': roomId });
