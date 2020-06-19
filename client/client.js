@@ -62,6 +62,11 @@ Template.about.events({
       ga("send", "event", "spotainize_common", "github_click");
     }
   },
+  'click #stack-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "stackoverflow_click");
+    }
+  }
 })
 
 Template.create.onCreated(function() {
