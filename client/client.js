@@ -1,5 +1,8 @@
 "use strict";
 
+const colors = [ "#AD87FF", "#D7E131", "#D15BB0", "#03A5C4", "#FBB43D", "#41DD92" ];
+const NUM_COLORS = 6;
+
 function debug(msg) {
   if (Session.get('debug') === true) {
     console.log(msg);
@@ -7,6 +10,10 @@ function debug(msg) {
 }
 
 Meteor.startup( function() {
+  if (Meteor.isClient) {
+    // Router.plugin("reywood:iron-router-ga");
+  }
+
   Session.set("playing", false);
   window.instrument = new Instrument();
   Meteor.call('userPings');
@@ -25,8 +32,42 @@ Meteor.startup( function() {
 Template.home.helpers({
   rooms: function() {
     return Polytunes.Rooms.find({ isPublic: true });
+  },
+  numLivePlays: function() {
+    return Polytunes.Rooms.find().count();
   }
 });
+
+Template.layout.events({
+  'click #ainize-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "poweredby_click");
+    }
+  },
+  'click #github-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "github_click");
+    }
+  },
+})
+
+Template.about.events({
+  'click #ainize-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "poweredby_click");
+    }
+  },
+  'click #github-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "github_click");
+    }
+  },
+  'click #stack-btn': function(event) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "stackoverflow_click");
+    }
+  }
+})
 
 Template.create.onCreated(function() {
   Meteor.call('createRoom', { isPublic: false }, function(error, roomId) {
@@ -68,22 +109,39 @@ Template.roomPlay.helpers({
 Template.waitingForPlayers.helpers({
   isPublic: function() {
     return this.room.isPublic;
-  },
+  }
+});
+
+Template.waitingPrivate.helpers({
+  currentUrl: function() {
+    return window.location.href;
+  }
+});
+
+Template.share.helpers({
   currentUrl: function() {
     return window.location.href;
   }
 });
 
 // Init clipboard with event delegation (only on parent)
-Template.waitingForPlayers.onRendered(function () {
+Template.share.onRendered(function () {
   this.clipboard = new Clipboard('.clipboard');
   this.clipboard.on('success', (e) => {
     toastr.success(TAPi18n.__('copied'));
   });
 });
 
-Template.waitingForPlayers.onDestroyed(function () {
-  this.clipboard.destroy();
+Template.share.onDestroyed(function () {
+  if (this.clipboard) this.clipboard.destroy();
+});
+
+Template.share.events({
+  'click button': function (event, template) {
+    if (Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "share_button_click");
+    }
+  }
 });
 
 Template.roomPlay.onCreated(function() {
@@ -92,15 +150,19 @@ Template.roomPlay.onCreated(function() {
 
   if (!user.profile.name) {
     Router.go("login", { roomId: room._id });
-  }
-
-  if (room.players.length >= 2) {
+  } else if (isPlayer(room.players, user._id) || room.players.length < 2) {
+    Session.set("currentRoom", room);
+    Meteor.call("userJoinsRoom", room._id);
+  } else {
     toastr.info(TAPi18n.__('room-full-watch-mode'));
     Router.go("roomWatch", { _id: room._id });
+    return;
   }
-
-  Session.set("currentRoom", room);
-  Meteor.call("userJoinsRoom", room._id);
+  const cb = (event) => {
+    window.removeEventListener('popstate', cb);
+    Router.go("home");
+  }
+  window.addEventListener('popstate', cb, false);
 });
 
 Template.roomPlay.onDestroyed(function() {
@@ -113,19 +175,57 @@ Template.roomPlay.onDestroyed(function() {
 });
 
 Template.roomWatch.onCreated(function() {
-  let room = this.data.room;
-  Session.set("currentRoom", room);
+  let room = this.data.room,
+    user = Meteor.user();
+
+  if (!user.profile.name) {
+    Router.go("login", { roomId: room._id });
+  } else {
+    Session.set("currentRoom", room);
+    Meteor.call("observerJoinsRoom", room._id);
+
+    const cursor = Polytunes.Rooms.find(room._id, { fields: { players: 1 } });
+    const handle = cursor.observeChanges({
+      changed: function(id, fields) {
+        if (!fields.players) {
+          return;
+        }
+        if (isPlayer(fields.players, user._id)) {
+          handle.stop();
+          Router.go("roomPlay", { "_id": room._id });
+        }
+      }
+    });
+  }
 });
+
+Template.roomWatch.onDestroyed(function() {
+  let room = this.data.room;
+  Meteor.call("observerLeavesRoom", room._id);
+  if (Session.get("playing")) {
+    window.togglePlay();
+  }
+
+  Session.set("currentRoom", null);
+})
+
+function isPlayer(players, user) {
+  if (!players || !players.length) return false;
+  return players.filter(item => item.userId === user).length;
+}
 
 Template.solo.onCreated(function() {
   let room = this.data.room;
   Session.set("currentRoom", room);
+  Session.set("currentColor", colors[Math.floor(Math.random() * NUM_COLORS)]); 
 });
 
 Template.solo.onDestroyed(function() {
   if (Session.get("playing")) {
     window.togglePlay();
   }
+  Session.set("currentRoom", null);
+  Session.set("currentColor", null); 
 });
 
 let boardData;
@@ -155,7 +255,15 @@ Template.board.helpers({
   }
 });
 
-Template.players.helpers({
+Template.playerNames.helpers({
+  players: function() {
+    return this.room.players;
+  },
+  isMe: function(userId) {
+    return Meteor.user()._id === userId ? "(you)" : "";
+  }
+});
+Template.playerColors.helpers({
   players: function() {
     return this.room.players;
   }
@@ -163,6 +271,12 @@ Template.players.helpers({
 Template.controls.helpers({
   playButtonIcon: function() {
     return (Session.get('playing') === true ? 'pause' : 'play');
+  },
+  numObservers: function() {
+    return this.room.observers ? this.room.observers.length : 0;
+  },
+  isSolo: function() {
+    return this.room.isSolo;
   }
 });
 
@@ -182,6 +296,13 @@ Template.login.events({
       Router.go('roomPlay', { _id: params.roomId });
     });
     return false;
+  },
+  'keyup #username': function(event) {
+    if(document.getElementById("username").value === "") { 
+      document.getElementById("username-btn").disabled = true; 
+    } else {
+      document.getElementById("username-btn").disabled = false; 
+    }
   }
 });
 
@@ -195,14 +316,24 @@ Template.body.events({
 });
 
 Template.board.events({
-
   // Play note on mouse down if playback is off
   'mousedown td': function(event, template) {
     let target = $(event.target);
+    const room = Session.get("currentRoom");
 
-    // Play note if board is not currently playing
-    if (Session.get("playing") == false && !target.hasClass('active')) {
-      instrument.startPlayingNote(target.data('frequency'));
+    if (target.hasClass('active')) {
+      if (room && room.isSolo) {
+        target.css("background", "#FFFFFF");
+      }
+    } else {
+      // Play note if board is not currently playing
+      if (Session.get("playing") == false ) {
+        instrument.startPlayingNote(target.data('frequency'));
+      }
+      if (room && room.isSolo) {
+        const color = Session.get("currentColor"); 
+        target.css("background", color);
+      }
     }
   },
 
@@ -222,28 +353,47 @@ Template.board.events({
   },
 });
 
-
 // Room in play mode
 Template.roomPlay.events({
 
   // Add note to the board when mouse button is released
   'mouseup td': function (event, template) {
+    // console.log("mouse upppppp", Session.get("currentRoom"))
     let target = $(event.target),
       cell = {
         id: target.data('id'),
         slot: $('.user_'+Meteor.userId()).data('slot'),
       };
 
+    if (cell.slot === undefined) {
+      console.log("invalid cell:", cell);
+      return;
+    }
+
     if (target.hasClass('active')) {
       cell.active = false;
+      cell.color = "#FFFFFF";
     } else {
+      const room = Polytunes.Rooms.findOne(Session.get("currentRoom")._id); 
+      const player = _.find(room.players, player => player.slot === cell.slot);
+      console.log("meteor room:", room);
+      console.log("player:", player);
+      console.log("cell:", cell);
       cell.active = true;
+      cell.color = player ? player.color : "#FFFFFF";
     }
 
     debug("Updating cell "+cell.id);
     Meteor.call('updateCell', cell, function(error, result) {
       if (error) {
-        toastr.error(TAPi18n.__(error.reason));
+        const popup = $(".popup");
+        if (popup) {
+          $(".popup > div").html(TAPi18n.__(error.reason));
+          popup.css("display", "flex");
+          setTimeout(() => {
+            popup.css("display", "none");
+          }, 3000);
+        }
       }
     });
   }
@@ -277,6 +427,9 @@ Template.roomWatch.events({
 
 Template.controls.events({
   'click #play': function (event, template) {
+    if (!Session.get("playing") && Meteor.settings.public.env.prod) {
+      ga("send", "event", "spotainize_common", "play_button_click");
+    }
     window.togglePlay(this.room);
     window.instrument.playNote(1); // Hack to fix sound in Safari iOS
   }
@@ -367,7 +520,7 @@ var cursor = 0;
 
 var getCellSize = function(boardSize) {
   let windowWidth = $(window).width(),
-    boardWidth = windowWidth,
+    boardWidth = windowWidth - 10,
     cellWidth = 0,
     borderSpacing = 5;
 

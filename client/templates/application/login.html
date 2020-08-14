@@ -1,7 +1,13 @@
 <template name="login">
-    <h1>{{_ "hi-whats-your-name"}}</h1>
-		<form id="login-form">
-			<input id="username" type="text" name="name" autofocus required>
-			<button type="submit">{{_ "continue"}}</button>
-		</form>
+  <div class="login">
+    <h2>{{_ "hi-whats-your-name"}}</h2>
+    <img src="/images/ico-face-filled.svg" width="40" height="40" />
+    <form id="login-form">
+      <input id="username" type="text" name="name" autofocus required />
+      <button id="username-btn" type="submit" disabled>
+        {{_ "continue"}}
+        <img src="/images/ico-arrow.svg" />
+      </button>
+    </form>
+  </div>
 </template>
