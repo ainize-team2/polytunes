@@ -6,72 +6,134 @@
       {{#if notEnoughPlayers}}
         {{> waitingForPlayers}}
       {{else}}
-        {{> board}}
-        {{> players}}
-        {{> controls}}
-        {{> audience}}
+        <div class="container">
+          {{> board}}
+          {{> controls}}
+        </div>
       {{/if}}
     {{/if}}
   </div>
 </template>
 
 <template name="waitingForPlayers">
-  <p><i class="fa fa-circle-o-notch fa-spin fa-2x"></i></p>
-  <h1>{{_ "waiting-for-another-player"}}</h1>
-  <p>{{_ "waiting-two-player-game"}}</p>
+  <div class="waiting">
+    {{#if isPublic}}
+      {{> waitingPublic}}
+    {{else}}
+      {{> waitingPrivate}}
+    {{/if}}
+  </div>
+</template>
 
-  {{#if isPublic}}
-    <p>{{_ "waiting-in-public-room"}}</p>
-  {{else}}
-    <p>{{_ "waiting-in-private-room"}}</p>
-  {{/if}}
+<template name="waitingPrivate">
+  <div class="waiting_icon">
+    <img src="/images/ico-face-filled.svg" />
+    <img src="/images/ico-face.svg" />
+  </div>
+  <h2 class="title">invite your friend</h2>
+  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline clipboard" readonly data-clipboard-text="{{currentUrl}}">
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a private room, you can always bring someone. Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!</p>
+    {{> share}}
+</template>
 
-  <p>{{_ "waiting-invite-with-url"}}</p>
+<template name="waitingPublic">
+  <div class="waiting_icon">
+    <img src="/images/ico-face-filled.svg" />
+    <img src="/images/ico-question.svg" />
+  </div>
+  <h2>waiting for another player</h2>
+  <p>Polytunes is a two-player game, and will start as soon as another player joins this room. You're in a public room, maybe someone will eventually join in. But if not, you can always bring someone. Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!</p>
+  {{> share}}
+</template>
 
-  <input id="shareUrl" type="url" value="{{currentUrl}}" class="btn-large btn-inline"> &nbsp;
-  <i class="fa fa-lg fa-clipboard pointer clipboard" data-clipboard-target="#shareUrl"></i>
-  <a href="https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}" target="_blank">
-    <i class="fa fa-facebook-square fa-lg"></i>
-  </a>
-  <a href="https://twitter.com/home?status={{currentUrl}}" target="_blank">
-    <i class="fa fa-twitter-square fa-lg"></i>
-  </a>
-  <a href="https://plus.google.com/share?url={{currentUrl}}" target="_blank">
-    <i class="fa fa-google-plus-square fa-lg"></i>
-  </a>
-
+<template name="share">
+  <div class="share">
+    <button id="copy" type="button" class="clipboard" data-clipboard-text="{{currentUrl}}">
+    </button>
+    <button id="fb" type="button" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{currentUrl}}')">
+    </button>
+    <button id="twitter" type="button" onclick="window.open('http://twitter.com/share?&url={{currentUrl}}')">
+    </button>
+  </div>
 </template>
 
 <template name="board">
-  <table id="board">
-    <tbody>
-      {{#each rows}}
-        <tr>
-          {{#each .}}
-            <td class="{{#if active}}active player_{{slot}}{{/if}}" data-id="{{id}}" data-frequency="{{frequency}}" style="width:{{size}}px;height:{{size}}px;"></td>
-          {{/each}}
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+  <div class="board-container">
+    {{> playerNames}}
+    <table id="board">
+      <tbody>
+        {{#each rows}}
+          <tr>
+            {{#each .}}
+          <td class="{{#if active}}active player_{{slot}}{{/if}}"
+              data-id="{{id}}"
+              data-frequency="{{frequency}}"
+              style="background:{{color}} !important;">
+            <div></div>
+          </td>
+            {{/each}}
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{> playerColors}}
+    <div class="popup"><div></div></div>
+  </div>
 </template>
 
-<template name="players">
-  <div class="player-list">
+<template name="playerNames">
+  <div class="player-names">
     {{#each players}}
-      <span class="player player_{{@index}} user_{{userId}}" data-slot={{@index}}>{{ name }}</span>
+      <div class="player player_{{@index}} user_{{userId}}" data-slot={{@index}}>
+        <div style="color:{{color}};">
+          {{#if @index}}
+            <span>{{ name }}</span>
+            <span>{{ isMe userId }}</span>
+            <img src="/images/ico-face.svg" />
+          {{else}}
+            <img src="/images/ico-face-filled.svg" />
+            <span>{{ name }}</span>
+            <span>{{ isMe userId }}</span>
+          {{/if}}
+        </div>
+        <div class="player-color" style="background-color:{{color}};"></div>
+      </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="playerColors">
+  <div class="player-colors">
+    {{#each players}}
+      <span class="player-color player_{{@index}} user_{{userId}}" data-slot={{@index}} style="background-color: {{color}};"></span>
     {{/each}}
   </div>
 </template>
 
 <template name="controls">
   <div class="controls">
-    <button id="play"><i class="fa fa-{{playButtonIcon}}"></i></button>
-  </div>
-</template>
-
-<template name="audience">
-  <div>
-    {{numObservers}}
+    <button id="play"><i class="fa fa-{{playButtonIcon}}"></i>Music Play</button>
+    {{#unless isSolo}}
+    <div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 30 24">
+        <rect class="eq-bar eq-bar--1" x="4" y="4" width="4" height="8"/>
+        <rect class="eq-bar eq-bar--2" x="10.2" y="4" width="4" height="16"/>
+        <rect class="eq-bar eq-bar--3" x="16.3" y="4" width="4" height="11"/>
+        <rect class="eq-bar eq-bar--4" x="22.4" y="4" width="4" height="11"/>
+      </svg>
+      {{numObservers}} audience here.
+    </div>
+    {{/unless}}
+    <h3>
+      {{#if isSolo}}
+        invite your friends to Polytunes
+      {{else}}
+        invite more audience
+      {{/if}}
+    </h3>
+    <p>
+      You can always bring someone.<br/>Send this page's URL to invite a friend, your neighbor, your secret crush or your grandma — anyone can play Polytunes!
+    </p>
+    {{> share}}
   </div>
 </template>

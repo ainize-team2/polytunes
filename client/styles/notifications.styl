@@ -9,3 +9,62 @@
     padding-bottom: 5px;
   }
 }
+
+.popup {
+  position: absolute;
+  display: none;
+  background: none;
+  background-color: #352528;
+  opacity: 0.9;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 28px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-120%, -50%);
+  //margin-top: 370px;
+  //margin-left: -360px;
+  padding: 58px 50px;
+
+  div {
+    width: 200px;
+    color: #FF6969;
+  }
+}
+
+#toast-container {
+  width: 200px;
+  
+  .toast {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 1088px) {
+  .popup {
+    //top: 50%;
+    //margin-top: -85px;
+    //margin-left: -150px;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (max-width: 945px) {
+  .popup {
+    //top: 0;
+    //margin-top: 285px;
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .popup {
+    //top: calc(50vh - 100px);
+    //left: calc(50vh - 150px);
+    //margin-left: 0;
+    //margin-top: 0;
+  }
+}
